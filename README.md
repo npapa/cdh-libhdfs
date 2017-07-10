@@ -14,6 +14,6 @@ $ sudo docker build -t cdh-libhdfs .
 ## Running HDFS container
 
 ```sh
-# Running and get a Bash interpreter
+# Running container
 $ sudo docker run --hostname=quickstart.cloudera --privileged=true -ti cdh-libhdfs
 ```
