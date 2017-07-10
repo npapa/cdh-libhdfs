@@ -4,8 +4,6 @@ Docker image for single libdfs node.
 
 **Only for development purpose.**
 
-License: **MIT**
-
 ## Local build
 ```sh
 $ sudo docker build -t cdh-libhdfs .
