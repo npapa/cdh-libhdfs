@@ -96,7 +96,8 @@ find_package(HDFS)
 include_directories(${HDFS_INCLUDE_DIR})
 set(TILEDB_LIB_DEPENDENCIES ${TILEDB_LIB_DEPENDENCIES} ${HDFS_LIBRARIES})
 
-#set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+SET(CMAKE_INSTALL_RPATH "/usr/lib64/:/usr/java/jdk1.7.0_67-cloudera/jre/lib/amd64/server/")
+SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 # Add pthread library to dependencies
 set(TILEDB_LIB_DEPENDENCIES ${TILEDB_LIB_DEPENDENCIES} pthread)

@@ -20,7 +20,7 @@ class HDFSTestFixture: public testing::Test {
   /* ********************************* */
 
   /** Test initialization. */
-  virtual int check_hdfs_io(int argc, char *argv[]);
+  virtual int check_hdfs_io(const char* writePath);
 };
 
 #endif
