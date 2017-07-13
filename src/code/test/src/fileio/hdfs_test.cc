@@ -1,8 +1,4 @@
 #include <hdfs_test.h>
-#include "hdfs.h"
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 
 int HDFSTestFixture::check_hdfs_io(const char* writePath) {
   hdfsFS fs = hdfsConnect("default", 0);
@@ -22,6 +18,5 @@ int HDFSTestFixture::check_hdfs_io(const char* writePath) {
 }
 
 TEST_F(HDFSTestFixture, check_hdfs_io) {
-   char *argv;
    check_hdfs_io("/tmp/testFile");
 }
