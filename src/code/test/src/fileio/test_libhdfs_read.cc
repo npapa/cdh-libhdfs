@@ -93,8 +93,44 @@ int HDFSTestFixture::check_hdfs_read(const char *rfile, tSize bufferSize) {
     return 0;
 }
 
+int HDFSTestFixture::get_hosts(const char *fileName) {
+    hdfsFS fs;
+    hdfsFile readFile;
+    char* buffer;
+    tSize curSize;
+
+    fs = hdfsConnect("default", 0);
+    if (!fs) {
+        fprintf(stderr, "Oops! Failed to connect to hdfs!\n");
+        exit(-1);
+    }
+
+    char ***hosts = hdfsGetHosts(fs, fileName, 0, 1);
+    int i,j;
+    if(hosts) {
+       fprintf(stdout, "hdfsGetHosts - SUCCESS! ... \n");
+       i=0;
+       while(hosts[i]) {
+          j = 0;
+          while(hosts[i][j]) {
+             fprintf(stdout,"\thosts[%d][%d] - %s\n", i, j, hosts[i][j]);
+             ++j;
+          }
+          ++i;
+       }
+    } else {
+       fprintf(stdout, "waah! hdfsGetHosts - FAILED!\n");
+    }
+
+    hdfsFreeHosts(hosts);
+    hdfsDisconnect(fs);
+
+    return 0;
+}
+
 TEST_F(HDFSTestFixture, check_hdfs_read_write) {
    check_hdfs_write("/tmp/testFile_rw",1000,1000000);
+   get_hosts("/tmp/testFile_rw");
    check_hdfs_read("/tmp/testFile_rw",1000);
 }
 

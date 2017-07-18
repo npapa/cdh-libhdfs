@@ -30,6 +30,7 @@ class HDFSTestFixture: public testing::Test {
   virtual int check_hdfs_io(const char* writePath);
   virtual int check_hdfs_write(const char *writeFileName, off_t fileTotalSize, tSize bufferSize);
   virtual int check_hdfs_read(const char *rfile, tSize bufferSize);
+  virtual int get_hosts(const char *fileName);
 };
 
 #endif
