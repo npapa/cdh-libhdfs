@@ -1,5 +1,22 @@
 #include <hdfs_test.h>
 
+static struct timeval tm1;
+static off_t totalSize;
+
+static inline void start()
+{
+    gettimeofday(&tm1, NULL);
+}
+
+static inline void stop()
+{
+    struct timeval tm2;
+    gettimeofday(&tm2, NULL);
+
+    unsigned long long t = 1000000 * (tm2.tv_sec - tm1.tv_sec) + (tm2.tv_usec - tm1.tv_usec);
+    printf("Time: %llu us, MB/s:%f\n", t, (double)totalSize/(double)t);
+}
+
 
 int HDFSTestFixture::check_hdfs_write(const char *writeFileName, off_t fileTotalSize, tSize bufferSize) {
     hdfsFS fs;
@@ -39,6 +56,8 @@ int HDFSTestFixture::check_hdfs_write(const char *writeFileName, off_t fileTotal
         buffer[i] = 'a' + (i%26);
     }
 
+    printf("Test write total bytes: %d with buffer size: %d\n", fileTotalSize, bufferSize);
+    start();    
     // write to the file
     for (nrRemaining = fileTotalSize; nrRemaining > 0; nrRemaining -= bufferSize ) {
       curSize = ( bufferSize < nrRemaining ) ? bufferSize : (tSize)nrRemaining;
@@ -47,6 +66,7 @@ int HDFSTestFixture::check_hdfs_write(const char *writeFileName, off_t fileTotal
         exit(-3);
       }
     }
+    stop();
 
     free(buffer);
     hdfsCloseFile(fs, writeFile);
@@ -79,12 +99,14 @@ int HDFSTestFixture::check_hdfs_read(const char *rfile, tSize bufferSize) {
         return -2;
     }
 
+    printf("Test read with buffer size: %d\n",bufferSize);
+    start();
     // read from the file
     curSize = bufferSize;
     for (; curSize == bufferSize;) {
         curSize = hdfsRead(fs, readFile, (void*)buffer, curSize);
     }
-
+    stop();
 
     free(buffer);
     hdfsCloseFile(fs, readFile);
@@ -129,8 +151,19 @@ int HDFSTestFixture::get_hosts(const char *fileName) {
 }
 
 TEST_F(HDFSTestFixture, check_hdfs_read_write) {
-   check_hdfs_write("/tmp/testFile_rw",1000,1000000);
+   totalSize=1000000000;
+   check_hdfs_write("/tmp/testFile_rw",totalSize,4096);
+   check_hdfs_read("/tmp/testFile_rw",4096);
+
+   check_hdfs_write("/tmp/testFile_rw",totalSize,1048576);
+   check_hdfs_read("/tmp/testFile_rw",1048576);
+
+   check_hdfs_write("/tmp/testFile_rw",totalSize,10485760);
+   check_hdfs_read("/tmp/testFile_rw",10485760);
+
+   check_hdfs_write("/tmp/testFile_rw",totalSize,104857600);
+   check_hdfs_read("/tmp/testFile_rw",104857600);
+
    get_hosts("/tmp/testFile_rw");
-   check_hdfs_read("/tmp/testFile_rw",1000);
 }
 
